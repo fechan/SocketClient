@@ -32,7 +32,7 @@ class SocketClient {
             if (request != null) {
                 logger.log(Level.INFO, "Writing request to socket...");
                 OutputStream sockOut = sock.getOutputStream(); // write to socket
-                sockOut.write(request.getBytes());
+                sockOut.write((request + "\n").getBytes());
             }
             
             logger.log(Level.INFO, "Reading response from socket...");

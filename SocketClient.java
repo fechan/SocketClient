@@ -4,6 +4,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Logger;
 import java.util.Arrays;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 
 class SocketClient {
@@ -16,6 +18,10 @@ class SocketClient {
         String logLevel = System.getProperty("socketClientLogLevel");
         if (logLevel != null) {
             logger.setLevel(Level.parse(logLevel));
+            ConsoleHandler logHandler = new ConsoleHandler();
+            logHandler.setLevel(Level.parse(logLevel));
+            logger.setUseParentHandlers(false);
+            logger.addHandler(logHandler);
         }
 
         // consume args 3+ as a single string
@@ -28,9 +34,11 @@ class SocketClient {
         try (Socket sock = new Socket(server, port)) {
             logger.log(Level.INFO, "Socket created!");
 
-            logger.log(Level.FINE, "No request body specified. Skipping write...");
-            if (request != null) {
+            if (request == null) {
+                logger.log(Level.FINE, "No request body specified. Skipping write...");
+            } else {
                 logger.log(Level.INFO, "Writing request to socket...");
+                logger.fine("Request body: " + request);
                 OutputStream sockOut = sock.getOutputStream(); // write to socket
                 sockOut.write((request + "\n").getBytes());
             }
@@ -43,6 +51,7 @@ class SocketClient {
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Oh!! My god!! IOException occurred while socket was being created/used!");
+            e.printStackTrace();
         }
         logger.log(Level.INFO, "Socket closed. Goodbye!");
     }

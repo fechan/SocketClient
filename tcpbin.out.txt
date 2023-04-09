@@ -1,0 +1,2 @@
+$ java -DsocketClientLogLevel=OFF SocketClient tcpbin.com 4242 this is a test of the echo service
+this is a test of the echo service
